@@ -10,11 +10,11 @@
       <el-form class="login_form">
         <!-- 用户名 -->
         <el-form-item prop="username">
-          <el-input></el-input>
+          <el-input prefix-icon="iconfont icon-user"></el-input>
         </el-form-item>
         <!-- 密码 -->
         <el-form-item prop="password">
-          <el-input type="password"></el-input>
+          <el-input type="password" prefix-icon="iconfont icon-3702mima"></el-input>
         </el-form-item>
         <!-- 按钮 -->
         <el-form-item class="btns">
