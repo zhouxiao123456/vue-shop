@@ -1,7 +1,28 @@
 <template>
   <div class="login_container">
     <!-- 登录盒子  -->
-    <div class="login_box"></div>
+    <div class="login_box">
+      <!-- 头像 -->
+      <div class="avatar_box">
+        <img src="../assets/logo.png" alt="" />
+      </div>
+      <!-- 登录表单 -->
+      <el-form class="login_form">
+        <!-- 用户名 -->
+        <el-form-item prop="username">
+          <el-input></el-input>
+        </el-form-item>
+        <!-- 密码 -->
+        <el-form-item prop="password">
+          <el-input type="password"></el-input>
+        </el-form-item>
+        <!-- 按钮 -->
+        <el-form-item class="btns">
+          <el-button type="primary">登录</el-button>
+          <el-button type="info">重置</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
   </div>
 </template>
 
@@ -37,7 +58,7 @@ export default {};
     img {
       width: 100%;
       height: 100%;
-      border-radius: 50%;
+      border-radius: 70%;
       background-color: #eee;
     }
   }
