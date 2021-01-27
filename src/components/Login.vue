@@ -7,7 +7,7 @@
         <img src="../assets/logo.png" alt="" />
       </div>
       <!-- 登录表单 -->
-      <el-form :model="loginForm" class="login_form">
+      <el-form :model="loginForm" :rules="loginFormRules" class="login_form">
         <!-- 用户名 -->
         <el-form-item prop="username">
           <el-input v-model="loginForm.username" prefix-icon="iconfont icon-user"></el-input>
@@ -33,6 +33,27 @@ export default {
       loginForm: {
         username: 'admin',
         password: '123456 '
+      },
+      //表单验证规则
+      loginFormRules: {
+        username: [
+          { required: true, message: '请输入登录名', trigger: 'blur' },
+          {
+            min: 3,
+            max: 10,
+            message: '登录名长度在 3 到 10 个字符',
+            trigger: 'blur'
+          }
+        ],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' },
+          {
+            min: 6,
+            max: 15,
+            message: '密码长度在 6 到 15 个字符',
+            trigger: 'blur'
+          }
+        ]
       }
     };
   }
