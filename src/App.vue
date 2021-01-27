@@ -1,9 +1,17 @@
 <template>
   <div id="app">
-    <p>hello Vue</p>
+    <router-view></router-view>
   </div>
 </template>
 
-<script></script>
+<script>
+// export default new Router({
+//   routes: []
+// });
+
+export default {
+  name: 'app'
+};
+</script>
 
 <style></style>
