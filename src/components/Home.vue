@@ -13,23 +13,23 @@
       <!-- 侧边栏 -->
       <el-aside width="200px">
         <!-- 侧边栏菜单区域 -->
-        <el-menu background-color="#333744" text-color="#fff" active-text-color="#ffd04b">
+        <el-menu background-color="#333744" text-color="#fff" active-text-color="#409eff" unique-opened>
           <!-- 一级菜单 -->
           <el-submenu :index="item.id + ''" v-for="item in menulist" :key="item.id">
             <!-- 一级菜单的模板区域 -->
             <template slot="title">
               <!-- 图标 -->
-              <i class="el-icon-location"></i>
+              <i :class="iconsObj[item.id]"></i>
               <!-- 文本 -->
               <span>{{ item.authName }}</span>
             </template>
             <!-- 二级菜单 -->
-            <el-menu-item :index="items.id + ''" v-for="items in item.children" :key="items.id">
+            <el-menu-item :index="subItem.id + ''" v-for="subItem in item.children" :key="subItem.id">
               <template slot="title">
                 <!-- 图标 -->
-                <i class="el-icon-location"></i>
+                <i class="el-icon-menu"></i>
                 <!-- 文本 -->
-                <span>{{ items.authName }}</span>
+                <span>{{ subItem.authName }}</span>
               </template>
             </el-menu-item>
           </el-submenu>
@@ -45,8 +45,15 @@
 export default {
   data() {
     return {
-      //左侧菜单栏的数据
-      menulist: []
+      // 左侧菜单数据
+      menulist: [],
+      iconsObj: {
+        125: 'iconfont icon-user',
+        103: 'iconfont icon-tijikongjian',
+        101: 'iconfont icon-shangpin',
+        102: 'iconfont icon-danju',
+        145: 'iconfont icon-baobiao'
+      }
     };
   },
   created() {
@@ -62,7 +69,6 @@ export default {
       const { data: res } = await this.$http.get('menus');
       if (res.meta.status !== 200) this.$message.error(res.meta.msg);
       this.menulist = res.data;
-      console.log(this.menulist);
     }
   }
 };
@@ -90,8 +96,14 @@ export default {
 }
 .el-aside {
   background-color: #333744;
+  .el-menu {
+    border-right: none;
+  }
 }
 .el-main {
   background-color: #eaedf1;
+}
+.iconfont {
+  margin-right: 10px;
 }
 </style>
