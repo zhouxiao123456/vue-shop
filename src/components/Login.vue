@@ -7,7 +7,7 @@
         <img src="../assets/logo.png" alt="" />
       </div>
       <!-- 登录表单 -->
-      <el-form :model="loginForm" ref="LoginFormRef" :rules="loginFormRules" class="login_form">
+      <el-form :model="loginForm" ref="loginFormRef" :rules="loginFormRules" class="login_form">
         <!-- 用户名 -->
         <el-form-item prop="username">
           <el-input v-model="loginForm.username" prefix-icon="iconfont icon-user"></el-input>
@@ -18,7 +18,7 @@
         </el-form-item>
         <!-- 按钮 -->
         <el-form-item class="btns">
-          <el-button type="primary">登录</el-button>
+          <el-button type="primary" @click="login">登录</el-button>
           <el-button type="info" @click="resetLoginForm">重置</el-button>
         </el-form-item>
       </el-form>
@@ -32,7 +32,7 @@ export default {
     return {
       loginForm: {
         username: 'admin',
-        password: '123456 '
+        password: '123456'
       },
       //表单验证规则
       loginFormRules: {
@@ -64,7 +64,17 @@ export default {
     resetLoginForm() {
       //this=>当前组件对象，其中的属性$refs包含了设置的表单ref
       //   console.log(this)
-      this.$refs.LoginFormRef.resetFields();
+      this.$refs.loginFormRef.resetFields();
+    },
+    //添加表单预验证，和登录验证
+    login() {
+      this.$refs.loginFormRef.validate(async (vaild) => {
+        //验证失败直接返回
+        if (!vaild) return;
+        const { data: res } = await this.$http.post('login', this.loginForm);
+        if (res.meta.status !== 200) return console.log('登录失败');
+        console.log('登录成功');
+      });
     }
   }
 };

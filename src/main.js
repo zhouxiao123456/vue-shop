@@ -8,6 +8,11 @@ import './assets/css/global.css';
 
 // 引入图标样式
 import './assets/fonts/iconfont.css';
+
+import axios from 'axios';
+axios.defaults.baseURL = 'http://192.168.88.249:8888/api/private/v1/';
+Vue.prototype.$http = axios;
+
 Vue.config.productionTip = false;
 
 new Vue({
