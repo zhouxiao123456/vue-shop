@@ -33,9 +33,9 @@
           </template>
         </el-table-column>
         <el-table-column label="操作">
-          <template width="180px">
+          <template width="180px" slot-scope="scope">
             <!-- 修改 -->
-            <el-button type="primary" size="mini" icon="el-icon-edit" @click="showEditDialog()"></el-button>
+            <el-button type="primary" size="mini" icon="el-icon-edit" @click="showEditDialog(scope.row.id)"></el-button>
             <!-- 删除 -->
             <el-button type="danger" size="mini" icon="el-icon-delete"></el-button>
             <!-- 分配角色 -->
@@ -153,7 +153,9 @@ export default {
         ]
       },
       // 控制修改用户对话框的显示与隐藏
-      editDialogVisible: false
+      editDialogVisible: false,
+      // 查询到的用户信息对象
+      editForm: {}
     };
   },
   created() {
@@ -202,6 +204,7 @@ export default {
         if (res.meta.status !== 201) {
           return this.$message.error('添加用户失败');
         }
+
         this.$message.success('添加用户成功');
         this.addDialogVisible = false;
         // 刷新用户列表
@@ -209,8 +212,12 @@ export default {
       });
     },
     //展示修改弹框
-    showEditDialog() {
+    async showEditDialog(id) {
+      const { data: res } = await this.$http.get('users/' + id);
+      if (res.meta.status !== 200) return this.$message.error('查询用户信息失败');
+      this.editForm = res.data;
       this.editDialogVisible = true;
+      console.log(this.editForm);
     }
   }
 };
