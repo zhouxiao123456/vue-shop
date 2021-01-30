@@ -49,7 +49,7 @@
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="queryInfo.pagenum" :page-sizes="[1, 2, 5, 10]" :page-size="queryInfo.pagesize" layout="total, sizes, prev, pager, next, jumper" :total="total"></el-pagination>
     </el-card>
     <!-- 添加用户对话框 -->
-    <el-dialog title="提示" :visible.sync="addDialogVisible" width="30%">
+    <el-dialog title="添加用户" :visible.sync="addDialogVisible" width="30%" @close="addDialogClosed">
       <!-- 内容主体 -->
       <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="70px">
         <el-form-item label="用户名" prop="username">
@@ -68,7 +68,7 @@
       <!-- 底部区域 -->
       <span slot="footer" class="dialog-footer">
         <el-button @click="addDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addDialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click="addUser">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -77,6 +77,22 @@
 <script>
 export default {
   data() {
+    // 验证邮箱的规则
+    const checkEmail = (rule, value, cb) => {
+      const regEmail = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/;
+      if (regEmail.test(value)) {
+        return cb();
+      }
+      cb(new Error('请输入合法的邮箱'));
+    };
+    // 验证手机号的规则
+    const checkMobile = (rule, value, cb) => {
+      const regMobile = /^(0|86|17951)?(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/;
+      if (regMobile.test(value)) {
+        return cb();
+      }
+      cb(new Error('请输入合法的手机'));
+    };
     return {
       // 获取用户列表的参数对象
       queryInfo: {
@@ -116,8 +132,17 @@ export default {
             trigger: 'blur'
           }
         ],
-        email: [{ required: true, message: '请输入邮箱', trigger: 'blur' }],
-        mobile: [{ required: true, message: '请输入手机', trigger: 'blur' }]
+        email: [
+          { required: true, message: '请输入邮箱', trigger: 'blur' },
+          { validator: checkEmail, trigger: 'blur' }
+        ],
+        mobile: [
+          { required: true, message: '请输入手机', trigger: 'blur' },
+          {
+            validator: checkMobile,
+            trigger: 'blur'
+          }
+        ]
       }
     };
   },
@@ -154,6 +179,24 @@ export default {
         return this.$message.error('更新用户状态失败');
       }
       this.$message.success('更新用户状态成功');
+    },
+    // 监听添加用户对话框的关闭事件
+    addDialogClosed() {
+      this.$refs.addFormRef.resetFields();
+    },
+    addUser() {
+      this.$refs.addFormRef.validate(async (valid) => {
+        if (!valid) return false;
+        // 可以发起添加用户的网络请求
+        const { data: res } = await this.$http.post('users', this.addForm);
+        if (res.meta.status !== 201) {
+          return this.$message.error('添加用户失败');
+        }
+        this.$message.success('添加用户成功');
+        this.addDialogVisible = false;
+        // 刷新用户列表
+        this.getUserList();
+      });
     }
   }
 };
