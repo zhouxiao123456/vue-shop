@@ -32,8 +32,8 @@
             <el-switch v-model="scope.row.mg_state" @change="userStateChanged(scope.row)"></el-switch>
           </template>
         </el-table-column>
-        <el-table-column label="操作">
-          <template width="180px" slot-scope="scope">
+        <el-table-column label="操作" width="180px">
+          <template slot-scope="scope">
             <!-- 修改 -->
             <el-button type="primary" size="mini" icon="el-icon-edit" @click="showEditDialog(scope.row.id)"></el-button>
             <!-- 删除 -->
@@ -49,7 +49,7 @@
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="queryInfo.pagenum" :page-sizes="[1, 2, 5, 10]" :page-size="queryInfo.pagesize" layout="total, sizes, prev, pager, next, jumper" :total="total"></el-pagination>
     </el-card>
     <!-- 添加用户对话框 -->
-    <el-dialog title="添加用户" :visible.sync="addDialogVisible" width="30%" @close="addDialogClosed">
+    <el-dialog title="添加用户" :visible.sync="addDialogVisible" width="50%" @close="addDialogClosed">
       <!-- 内容主体 -->
       <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="70px">
         <el-form-item label="用户名" prop="username">
@@ -73,7 +73,17 @@
     </el-dialog>
     <!-- 修改用户的对话框 -->
     <el-dialog title="修改用户" :visible.sync="editDialogVisible" width="50%">
-      <span>这是一段信息</span>
+      <el-form :model="editForm" :rules="editFormRules" ref="editFormRef" label-width="70px">
+        <el-form-item label="用户名">
+          <el-input v-model="editForm.username" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email">
+          <el-input v-model="editForm.email"></el-input>
+        </el-form-item>
+        <el-form-item label="手机" prop="mobile">
+          <el-input v-model="editForm.mobile"></el-input>
+        </el-form-item>
+      </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="editDialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="editDialogVisible = false">确 定</el-button>
@@ -154,8 +164,24 @@ export default {
       },
       // 控制修改用户对话框的显示与隐藏
       editDialogVisible: false,
-      // 查询到的用户信息对象
-      editForm: {}
+      // 查询到的用户信息对象，即便为空也要写上 editForm，防止报错
+      editForm: {},
+      editFormRules: {
+        email: [
+          { required: true, message: '请输入邮箱', trigger: 'blur' },
+          {
+            validator: checkEmail,
+            trigger: 'blur'
+          }
+        ],
+        mobile: [
+          { required: true, message: '请输入手机号', trigger: 'blur' },
+          {
+            validator: checkMobile,
+            trigger: 'blur'
+          }
+        ]
+      }
     };
   },
   created() {
@@ -204,20 +230,20 @@ export default {
         if (res.meta.status !== 201) {
           return this.$message.error('添加用户失败');
         }
-
         this.$message.success('添加用户成功');
         this.addDialogVisible = false;
         // 刷新用户列表
         this.getUserList();
       });
     },
-    //展示修改弹框
+    // 修改用户
     async showEditDialog(id) {
       const { data: res } = await this.$http.get('users/' + id);
-      if (res.meta.status !== 200) return this.$message.error('查询用户信息失败');
+      if (res.meta.status !== 200) {
+        return this.$message.error('查询用户信息失败');
+      }
       this.editForm = res.data;
       this.editDialogVisible = true;
-      console.log(this.editForm);
     }
   }
 };
